@@ -15,6 +15,8 @@ router.get('/especiales', (req, res) => res.render('especiales'));
 router.get('/tecnicos', (req, res) => res.render('tecnicos'));
 router.get('/cascos', (req, res) => res.render('cascos'));
 router.get('/calificar', (req, res) => res.render('calificar'));
+router.get('/privacidad', (req, res) => res.render('privacidad'));
+router.get('/habeas-data', (req, res) => res.render('habeas-data'));
 
 // ==========================================
 // RUTAS DE PROCESAMIENTO DE SERVICIOS (POST)
