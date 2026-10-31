@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairos Express - Cotizador Envío con Mapa</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Leaflet CSS para el Mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            background-color: #121212;
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card-custom {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+        .btn-custom {
+            background: linear-gradient(135deg, #ffc107, #ff5722);
+            color: #000;
+            font-weight: bold;
+            border: none;
+        }
+        .btn-custom:hover {
+            opacity: 0.9;
+            color: #000;
+        }
+        .text-accent {
+            color: #ffc107;
+        }
+        .form-label {
+            color: #ffffff !important;
+            font-weight: 500;
+        }
+        .form-text {
+            color: #adb5bd !important;
+        }
+        /* Contenedor del Mapa */
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #444;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-custom p-4">
+                <h2 class="text-center mb-2 text-accent">📦 Kairos Express</h2>
+                <h5 class="text-center mb-4 text-light">Cotizador Inteligente con Geolocalización (Cali / Valle)</h5>
+                
+                <form action="/process-shipment" method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="pickup_address" class="form-label">Dirección de Recogida (Origen)</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="pickup_address" name="pickup_address" required placeholder="Ej. Calle 5 # 66-20, Cali">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="recipient_address" class="form-label">Dirección de Entrega (Destino)</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="recipient_address" name="recipient_address" required placeholder="Ej. Avenida 6N # 25-10, Cali">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="recipient_name" class="form-label">Nombre de Quien Recibe</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="recipient_name" name="recipient_name" required placeholder="Ej. Carlos Andrés Ruiz">
+                    </div>
+
+                    <!-- NUEVA OPCIÓN: Selector de Programación de Envío -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2">
+                            <label for="tipo_programacion" class="form-label">Modalidad del Envío</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="tipo_programacion" name="tipo_programacion" onchange="toggleAgendaEnvio(this.value)">
+                                <option value="inmediato">🚀 Envío Inmediato (Ya mismo)</option>
+                                <option value="programado">📅 Agendar para Otro Día y Hora</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2" id="campo_fecha_envio" style="display: none;">
+                            <label for="scheduled_at" class="form-label">Fecha y Hora Programada</label>
+                            <input type="datetime-local" class="form-control bg-dark text-light border-secondary" id="scheduled_at" name="scheduled_at">
+                        </div>
+                    </div>
+
+                    <!-- Campos ocultos o calculados -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="distance_km" class="form-label">Distancia Calculada (Km)</label>
+                            <input type="text" step="0.1" class="form-control bg-dark text-warning fw-bold border-secondary" id="distance_km" name="distance_km" readonly value="5.0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="total_cost_display" class="form-label">Costo Total ($900 COP / Km)</label>
+                            <input type="text" class="form-control bg-dark text-success fw-bold border-secondary" id="total_cost_display" readonly value="$4,500 COP">
+                            <!-- Campo oculto que se envía al servidor -->
+                            <input type="hidden" id="total_cost" name="total_cost" value="4500">
+                        </div>
+                    </div>
+
+                    <!-- Botón para alternar vista satelital -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="text-muted small">Visualiza tu ruta en tiempo real:</span>
+                        <button type="button" id="toggleMapStyle" class="btn btn-sm btn-outline-warning">Cambiar a Vista Satelital 🛰️</button>
+                    </div>
+
+                    <!-- Contenedor del Mapa -->
+                    <div id="map"></div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-custom btn-lg">Confirmar y Generar Guía de Envío</button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center mt-3">
+                <a href="/" class="text-decoration-none text-accent">← Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    function toggleAgendaEnvio(valor) {
+        const campoFecha = document.getElementById('campo_fecha_envio');
+        if (valor === 'programado') {
+            campoFecha.style.display = 'block';
+            document.getElementById('scheduled_at').required = true;
+        } else {
+            campoFecha.style.display = 'none';
+            document.getElementById('scheduled_at').required = false;
+        }
+    }
+
+    // Inicializar el mapa centrado en Cali, Colombia
+    const map = L.map('map').setView([3.4516, -76.5320], 13);
+
+    // Capas de mapas (Normal y Satelital)
+    const normalLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-eGP, and the GIS User Community'
+    });
+
+    // Añadir capa normal por defecto
+    normalLayer.addTo(map);
+
+    let isSatellite = false;
+    document.getElementById('toggleMapStyle').addEventListener('click', function() {
+        if (isSatellite) {
+            map.removeLayer(satelliteLayer);
+            normalLayer.addTo(map);
+            this.textContent = "Cambiar a Vista Satelital 🛰️";
+            isSatellite = false;
+        } else {
+            map.removeLayer(normalLayer);
+            satelliteLayer.addTo(map);
+            this.textContent = "Cambiar a Mapa Normal 🗺️";
+            isSatellite = true;
+        }
+    });
+
+    // Marcadores iniciales en Cali (Arrastrables)
+    const markerOrigen = L.marker([3.4350, -76.5400], {draggable: true}).addTo(map).bindPopup("Recogida (Origen)").openPopup();
+    const markerDestino = L.marker([3.3950, -76.5450], {draggable: true}).addTo(map).bindPopup("Entrega (Destino)").openPopup();
+
+    // Función matemática Haversine para calcular distancia en km
+    function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+        const R = 6371; 
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    // Actualizar inputs y costos
+    function actualizarRutaYCostos() {
+        const posOrigen = markerOrigen.getLatLng();
+        const posDestino = markerDestino.getLatLng();
+
+        const distanciaLinea = calcularDistanciaKm(posOrigen.lat, posOrigen.lng, posDestino.lat, posDestino.lng);
+        const distanciaRealKm = distanciaLinea * 1.25; // Factor urbano de Cali
+        const kmFinal = distanciaRealKm < 1 ? 1.0 : distanciaRealKm;
+        
+        const costoTotal = kmFinal * 900;
+
+        document.getElementById('distance_km').value = kmFinal.toFixed(1);
+        document.getElementById('total_cost_display').value = '$' + Math.round(costoTotal).toLocaleString() + ' COP';
+        document.getElementById('total_cost').value = Math.round(costoTotal);
+    }
+
+    // Buscar dirección escrita automáticamente usando OpenStreetMap Nominatim
+    async function buscarDireccionEnMapa(direccion, esOrigen) {
+        if (!direccion || direccion.length < 5) return;
+        
+        try {
+            const query = encodeURIComponent(direccion + ", Cali, Valle del Cauca");
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`);
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const lat = parseFloat(data[0].lat);
+                const lon = parseFloat(data[0].lon);
+                const nuevaPos = [lat, lon];
+
+                if (esOrigen) {
+                    markerOrigen.setLatLng(nuevaPos);
+                    map.setView(nuevaPos, 14);
+                } else {
+                    markerDestino.setLatLng(nuevaPos);
+                }
+                actualizarRutaYCostos();
+            }
+        } catch (error) {
+            console.error("Error buscando la dirección:", error);
+        }
+    }
+
+    document.getElementById('pickup_address').addEventListener('change', function() {
+        buscarDireccionEnMapa(this.value, true);
+    });
+
+    document.getElementById('recipient_address').addEventListener('change', function() {
+        buscarDireccionEnMapa(this.value, false);
+    });
+
+    markerOrigen.on('dragend', actualizarRutaYCostos);
+    markerDestino.on('dragend', actualizarRutaYCostos);
+
+    actualizarRutaYCostos();
+</script>
+</body>
+</html>

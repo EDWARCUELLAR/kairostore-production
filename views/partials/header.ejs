@@ -1,0 +1,279 @@
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; position: relative;">
+    
+    <!-- Logo Grande e Independiente -->
+    <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+        <img src="/img/logo-kairos.webp" alt="Kairos Express" style="width: 120px; height:120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--yellow); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    </a>
+
+    <!-- Botón Hamburguesa Móvil -->
+    <button class="menu-toggle" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <!-- Navegación Principal -->
+    <nav class="main-nav" aria-label="Navegación principal">
+        <!-- Botón de Cerrar / Devolver dentro del menú móvil -->
+        <!-- <button class="menu-close-btn" aria-label="Cerrar menú">&times;</button> -->
+
+        <a href="/cotizar" class="text-link">Envíos</a>
+        <a href="/especiales" class="text-link">Vueltas VIP</a>
+        <a href="/tecnicos" class="text-link">Técnicos</a>
+        <a href="/cotizar" class="pill yellow-pill">Cotizar Envío</a>
+    </nav>
+    
+    
+</header>
+
+<style>
+    /* Estilos Generales del Header (Escritorio) */
+    .topbar {
+        position: absolute;
+        z-index: 50;
+        top: clamp(20px, 4.4vh, 54px);
+        left: 15vw;  /* Damos un poquito más de margen a la izquierda */
+        right: 8vw; /* Damos un margen a la derecha para que el menú se desplace hacia adentro */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: transparent;
+        width: auto;
+    }
+
+    .main-nav {
+        display: flex;
+        align-items: center;
+        gap: clamp(20px, 2.5vw, 35px);
+        margin-right: 4vw; /* <--- Esto empuja todo el menú un poco más hacia el centro de la pantalla */
+    }
+
+    .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: clamp(14px, 0.98vw, 19px);
+        font-weight: 650;
+        letter-spacing: -0.025em;
+        color: #111111;
+        text-decoration: none;
+        z-index: 60;
+    }
+
+    .mark {
+        position: relative;
+        display: inline-block;
+        width: 21px;
+        height: 21px;
+        flex: 0 0 21px;
+    }
+
+    .mark i {
+        position: absolute;
+        top: 9.5px;
+        left: 1px;
+        width: 19px;
+        height: 2px;
+        border-radius: 3px;
+        background: #ffcc00; /* Amarillo corporativo */
+        box-shadow: 0 0 4px rgba(255, 204, 0, 0.4);
+        transform-origin: 50% 50%;
+    }
+
+    .mark i:nth-child(2) { transform: rotate(45deg); }
+    .mark i:nth-child(3) { transform: rotate(90deg); }
+    .mark i:nth-child(4) { transform: rotate(135deg); }
+
+    /* .main-nav {
+        display: flex;
+        align-items: center;
+        gap: clamp(15px, 2vw, 30px);
+    } */
+
+    .text-link {
+        font-size: clamp(13px, 0.88vw, 16px);
+        font-weight: 650;
+        color: #111111;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .text-link:hover {
+        color: #cca300;
+    }
+
+    .pill {
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0 24px;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .pill:hover {
+        transform: translateY(-2px);
+    }
+
+    .yellow-pill { 
+        background: #ffcc00; 
+        color: #0b0b0b; 
+        box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+    }
+
+    .yellow-pill:hover {
+        background: #e0b300;
+    }
+
+    /* Botón Hamburguesa Oculto en PC */
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        width: 32px;
+        height: 24px;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0;
+        z-index: 60;
+    }
+
+    .menu-toggle span {
+        display: block;
+        width: 100%;
+        height: 2.5px;
+        background-color: #111111;
+        border-radius: 2px;
+        transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* Animación del botón hamburguesa a "X" */
+    .menu-toggle.active span:nth-child(1) {
+        transform: translateY(11px) rotate(45deg);
+        background-color: #ffcc00;
+    }
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+        transform: translateY(-11px) rotate(-45deg);
+        background-color: #ffcc00;
+    }
+
+    /* ==========================================
+       ADAPTABILIDAD PARA MÓVILES Y TABLETS (max-width: 900px)
+       ========================================== */
+    @media (max-width: 900px) {
+        .menu-toggle {
+            display: flex; /* Mostrar hamburguesa en pantallas chicas */
+        }
+        .topbar {
+            position: fixed !important; /* Lo fija arriba para que flote al hacer scroll */
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            padding: 12px 16px !important;
+            background: rgba(11, 11, 11, 0.85) !important; /* Fondo oscuro translúcido */
+            backdrop-filter: blur(12px) !important;         /* Efecto cristal esmerilado */
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-bottom: 1px solid rgba(255, 204, 0, 0.2); /* Sutil línea dorada corporativa */
+            z-index: 999 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+        
+        .main-nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #0b0b0b; /* Fondo oscuro elegante */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            z-index: 45;
+            transform: translateX(100%); /* Oculto fuera de pantalla por defecto */
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .main-nav.active {
+            transform: translateX(0); /* Deslizar menú hacia la pantalla */
+        }
+
+        /* Forzamos texto blanco y nítido para los enlaces en el menú móvil */
+        .main-nav .text-link {
+            font-size: 1.5rem !important;
+            color: #ffffff !important; 
+            font-weight: 700 !important;
+        }
+
+        .main-nav .text-link:hover {
+            color: #ffcc00 !important;
+        }
+
+        .yellow-pill {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            padding: 12px 35px;
+        }
+    }
+    /* Tamaño perfecto y equilibrado del logo en PC */
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--yellow);
+        }
+
+        /* Ajuste para móviles: un poquito más compacto para que no estorbe */
+        @media (max-width: 768px) {
+            .brand-logo {
+                width: 38px !important;
+                height: 38px !important;
+                border-width: 1.5px !important;
+            }
+            
+            /* Aseguramos que el contenido principal tenga su espacio arriba en móvil */
+            .hero-copy {
+                margin-top: 30px !important; 
+            }
+        }
+        
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const mainNav = document.querySelector('.main-nav');
+        
+        if (menuToggle && mainNav) {
+            menuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                menuToggle.classList.toggle('active');
+                mainNav.classList.toggle('active');
+                
+                const isExpanded = menuToggle.classList.contains('active');
+                menuToggle.setAttribute('aria-expanded', isExpanded);
+            });
+            
+            // Cerrar menú automáticamente al hacer clic en cualquier opción
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menuToggle.classList.remove('active');
+                    mainNav.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+    });
+</script>

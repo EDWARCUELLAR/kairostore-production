@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairos Express - Torre de Control (Panel)</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card-custom {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+        .text-accent {
+            color: #ffc107;
+        }
+        table {
+            color: #f8f9fa !important;
+        }
+        .table-dark-custom {
+            background-color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-accent">🚀 Kairos Express - Torre de Control</h1>
+            <p class="text-muted">Panel administrativo de seguimiento para envíos, mandados VIP y servicios técnicos.</p>
+            <a href="/" class="btn btn-outline-warning btn-sm">← Volver al Inicio</a>
+        </div>
+    </div>
+
+    <!-- Sección 1: Envíos Recientes -->
+    <div class="card card-custom p-4 mb-4">
+        <h3 class="mb-3 text-info">📦 Envíos Normales y Cotizaciones</h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Guía</th>
+                        <th>Destinatario</th>
+                        <th>Dirección</th>
+                        <th>Distancia (km)</th>
+                        <th>Total ($)</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (shipments.length > 0) { %>
+                        <% shipments.forEach(item => { %>
+                            <tr>
+                                <td class="fw-bold text-warning"><%= item.tracking_number %></td>
+                                <td><%= item.recipient_name %></td>
+                                <td><%= item.recipient_address %></td>
+                                <td><%= item.distance_km %> km</td>
+                                <td>$<%= Number(item.total_cost).toLocaleString() %> COP</td>
+                                <td><span class="badge bg-info"><%= item.status %></span></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="6" class="text-center text-muted">No hay envíos registrados todavía.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sección 2: Vueltas Especiales VIP -->
+    <div class="card card-custom p-4 mb-4">
+        <h3 class="mb-3 text-warning">⭐ Vueltas Especiales y Notariales</h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Código VIP</th>
+                        <th>Tipo de Trámite</th>
+                        <th>Descripción / Instrucciones</th>
+                        <th>Horas Est.</th>
+                        <th>Total Estimado</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (specials.length > 0) { %>
+                        <% specials.forEach(item => { %>
+                            <tr>
+                                <td class="fw-bold text-warning"><%= item.tracking_code %></td>
+                                <td><%= item.errand_type %></td>
+                                <td><%= item.description %></td>
+                                <td><%= item.estimated_hours %> h</td>
+                                <td>$<%= Number(item.total_cost).toLocaleString() %> COP</td>
+                                <td><span class="badge bg-warning text-dark"><%= item.status %></span></td>
+                                <td>
+    <a href="https://wa.me/57${item.client_phone}" target="_blank" class="text-success text-decoration-none fw-bold">
+        📞 ${item.client_phone}
+    </a>
+</td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="6" class="text-center text-muted">No hay vueltas VIP registradas todavía.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sección 3: Servicios Técnicos -->
+    <div class="card card-custom p-4">
+        <h3 class="mb-3 text-success">🔧 Solicitudes de Servicios Técnicos</h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Código Tech</th>
+                        <th>Cliente</th>
+                        <th>Dirección</th>
+                        <th>Equipo</th>
+                        <th>Falla Reportada</th>
+                        <th>Visita Diagnóstica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (technicals.length > 0) { %>
+                        <% technicals.forEach(item => { %>
+                            <tr>
+                                <td class="fw-bold text-success"><%= item.service_code %></td>
+                                <td><%= item.client_name %></td>
+                                <td><%= item.client_address %></td>
+                                <td><%= item.equipment_type %></td>
+                                <td><%= item.issue_description %></td>
+                                <td>$<%= Number(item.estimated_cost).toLocaleString() %> COP</td>
+                                <td>
+    <a href="https://wa.me/57${item.client_phone}" target="_blank" class="text-success text-decoration-none fw-bold">
+        📞 ${item.client_phone}
+    </a>
+</td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="6" class="text-center text-muted">No hay servicios técnicos registrados todavía.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lavado de Cascos a Vapor - Kairos Express</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card-custom {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+        }
+        .btn-custom {
+            background: linear-gradient(135deg, #ffc107, #ff5722);
+            color: #000;
+            font-weight: bold;
+            border: none;
+        }
+        .btn-custom:hover {
+            opacity: 0.9;
+            color: #000;
+        }
+        .text-accent {
+            color: #ffc107;
+        }
+        .form-label {
+            color: #ffffff !important;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card card-custom p-4">
+                <h2 class="text-center mb-2 text-accent">🪖 Lavado de Cascos a Vapor</h2>
+                <h5 class="text-center mb-4 text-light">Estación Móvil & Puntos Autorizados en Cali</h5>
+                
+                <form action="/process-helmet-wash" method="POST">
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Tu Nombre Completo</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="client_name" name="client_name" required placeholder="Ej. Carlos Ruiz">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="client_phone" class="form-label">Número de Teléfono / WhatsApp</label>
+                        <input type="tel" class="form-control bg-dark text-light border-secondary" id="client_phone" name="client_phone" required placeholder="Ej. 3101234567">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="station_location" class="form-label">Punto / Estación de Lavado Elegida</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="station_location" name="station_location" required>
+                            <option value="" disabled selected>-- Selecciona un punto en Cali --</option>
+                            <option value="CC Centenario (Norte)">🏢 CC Centenario (Parqueadero Motos - Norte)</option>
+                            <option value="CC Unicentro (Sur)">🏢 CC Unicentro (Zona Sur)</option>
+                            <option value="Parque del Perro (San Fernando)">🌳 Parque del Perro (San Fernando)</option>
+                            <option value="Estación Principal Yumbo">⛽ Estación Principal Yumbo / Acopi</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="service_type" class="form-label">Tipo de Servicio</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="service_type" name="service_type" required>
+                            <option value="express">💨 Lavado Express Secado Rápido ($12.000 COP)</option>
+                            <option value="profundo">🔥 Desinfección Profunda a Vapor + Aromatización ($20.000 COP)</option>
+                        </select>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-2">
+                            <label for="scheduled_date" class="form-label">Fecha de la Cita</label>
+                            <input type="date" class="form-control bg-dark text-light border-secondary" id="scheduled_date" name="scheduled_date" required>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="scheduled_time" class="form-label">Hora Estimada</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="scheduled_time" name="scheduled_time" required>
+                                <option value="09:00 AM">09:00 AM</option>
+                                <option value="10:30 AM">10:30 AM</option>
+                                <option value="12:00 PM">12:00 PM (Mediodía)</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="04:00 PM">04:00 PM</option>
+                                <option value="06:00 PM">06:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-custom btn-lg py-3">🚀 RESERVAR TURNO DE LAVADO</button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center mt-3">
+                <a href="/" class="text-decoration-none text-accent">← Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

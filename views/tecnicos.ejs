@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairos Express - Servicios Técnicos Especializados</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fuente corporativa Instrument Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;650;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0b0b0b;
+            --paper: #0f0e0c;
+            --yellow: #ffcc00;
+            --yellow-dark: #e0b300;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: #fbfbf9;
+            font-family: 'Instrument Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 50% -12%, rgba(255, 204, 0, 0.15), transparent 35%),
+                linear-gradient(180deg, #12100b 0%, #080808 100%);
+        }
+
+        .card-custom {
+            background-color: #141414;
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-custom::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+        }
+
+        .btn-custom {
+            background-color: var(--yellow);
+            color: var(--ink);
+            font-weight: 700;
+            border: none;
+            border-radius: 999px;
+            padding: 14px;
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.3);
+        }
+
+        .btn-custom:hover {
+            background-color: #ffd633;
+            color: var(--ink);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 204, 0, 0.45);
+        }
+
+        .text-accent {
+            color: var(--yellow);
+        }
+
+        .form-label {
+            color: #e0e0dc !important;
+            font-weight: 650;
+            font-size: 0.92rem;
+        }
+
+        .form-text {
+            color: #9e9e99 !important;
+        }
+
+        .form-control, .form-select {
+            background-color: #1c1c1c !important;
+            border: 1.5px solid #333 !important;
+            color: #fff !important;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--yellow) !important;
+            box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2) !important;
+            background-color: #222 !important;
+            color: #fff !important;
+        }
+
+        .form-control::placeholder {
+            color: #666;
+        }
+
+        .tarifa-box {
+            background: rgba(255, 204, 0, 0.05);
+            border: 2px dashed rgba(255, 204, 0, 0.4);
+            border-radius: 14px;
+            padding: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-7">
+            <div class="card card-custom p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-accent mb-1">🔧 Kairos.express Tech</h2>
+                    <p class="text-muted small text-uppercase tracking-wider">Servicio Técnico a Domicilio</p>
+                </div>
+                
+                <form action="/process-technical-service" method="POST">
+                    <div class="mb-3">
+                        <label for="client_name" class="form-label">Nombre del Cliente</label>
+                        <input type="text" class="form-control" id="client_name" name="client_name" required placeholder="Ej. Eduardo Cuéllar">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="client_address" class="form-label">Dirección del Servicio (Cali / Valle)</label>
+                        <input type="text" class="form-control" id="client_address" name="client_address" required placeholder="Ej. Calle 5 # 66-20">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="client_phone" class="form-label">Teléfono de Contacto / WhatsApp</label>
+                        <input type="tel" class="form-control" id="client_phone" name="client_phone" required placeholder="Ej. 3101234567">
+                    </div>
+
+                    <!-- Selector de Programación Técnica -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-2">
+                            <label for="tipo_programacion" class="form-label">Tipo de Visita</label>
+                            <select class="form-select" id="tipo_programacion" name="tipo_programacion" onchange="toggleAgendaTecnica(this.value)">
+                                <option value="inmediato">🚨 Urgencia / Hoy mismo</option>
+                                <option value="programado">📅 Agendar Cita Técnica</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2" id="campo_fecha_tecnico" style="display: none;">
+                            <label for="scheduled_at" class="form-label">Fecha y Hora de la Visita</label>
+                            <input type="datetime-local" class="form-control" id="scheduled_at" name="scheduled_at">
+                        </div>
+                    </div>
+
+                    <script>
+                        function toggleAgendaTecnica(valor) {
+                            const campoFecha = document.getElementById('campo_fecha_tecnico');
+                            if (valor === 'programado') {
+                                campoFecha.style.display = 'block';
+                                document.getElementById('scheduled_at').required = true;
+                            } else {
+                                campoFecha.style.display = 'none';
+                                document.getElementById('scheduled_at').required = false;
+                            }
+                        }
+                    </script>
+
+                    <div class="mb-3">
+                        <label for="equipment_type" class="form-label">Tipo de Equipo o Electrodoméstico</label>
+                        <select class="form-select" id="equipment_type" name="equipment_type" required>
+                            <option value="nevera">Nevera / Refrigeración (Diagnóstico y Carga)</option>
+                            <option value="computador">Computador / Laptop (Mantenimiento / Software)</option>
+                            <option value="lavadora">Lavadora / Secadora</option>
+                            <option value="aire">Aire Acondicionado (Instalación / Mantenimiento)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="issue_description" class="form-label">Descripción de la Falla</label>
+                        <textarea class="form-control" id="issue_description" name="issue_description" rows="3" required placeholder="Ej. La nevera no enfría en la parte de abajo y suena extraño el ventilador."></textarea>
+                    </div>
+
+                    <div class="tarifa-box my-3">
+                        <label for="estimated_cost" class="form-label mb-1">Costo Base de Visita y Diagnóstico</label>
+                        <input type="text" class="form-control fw-bold border-0 bg-transparent p-0 fs-4 text-warning" readonly value="$35,000 COP">
+                        <input type="hidden" id="estimated_cost" name="estimated_cost" value="35000">
+                        <div class="form-text small mt-1">Incluye traslado del técnico a domicilio y revisión inicial.</div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-custom btn-lg">Solicitar Técnico a Domicilio</button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/" class="text-decoration-none text-warning fw-semibold">← Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
